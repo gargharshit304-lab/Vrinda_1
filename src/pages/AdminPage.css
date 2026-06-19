@@ -1,0 +1,38 @@
+/* Scrollable Orders Table Styles */
+.orders-container {
+  scroll-behavior: smooth;
+}
+
+.orders-filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.orders-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.orders-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.orders-container::-webkit-scrollbar-thumb {
+  background: #d1e3d6;
+  border-radius: 3px;
+}
+
+.orders-container::-webkit-scrollbar-thumb:hover {
+  background: #a8d5ba;
+}
+
+.orders-table-head {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+}

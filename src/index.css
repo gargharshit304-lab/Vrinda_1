@@ -1,0 +1,504 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply font-body text-sage-900 antialiased;
+    background:
+      radial-gradient(circle at 12% 10%, rgba(70, 102, 75, 0.18), transparent 30%),
+      radial-gradient(circle at 84% 20%, rgba(31, 61, 43, 0.2), transparent 34%),
+      radial-gradient(circle at 50% 100%, rgba(228, 217, 201, 0.72), transparent 50%),
+      linear-gradient(180deg, #f7f4ee 0%, #f5f1e9 55%, #efe8dc 100%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.2;
+    background-image: radial-gradient(rgba(31, 61, 43, 0.22) 0.5px, transparent 0.5px);
+    background-size: 3px 3px;
+    z-index: -1;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border border-white/55 bg-white/55 shadow-soft backdrop-blur-xl;
+  }
+
+  .status-pending,
+  .status-processing {
+    @apply border border-amber-300 bg-amber-100 text-amber-700;
+  }
+
+  .status-packed {
+    @apply border border-sky-300 bg-sky-100 text-sky-700;
+  }
+
+  .status-out-for-delivery,
+  .status-shipped {
+    @apply border border-orange-300 bg-orange-100 text-orange-700;
+  }
+
+  .status-delivered {
+    @apply border border-emerald-300 bg-emerald-100 text-emerald-700;
+  }
+
+  .status-cancelled {
+    @apply border border-rose-300 bg-rose-100 text-rose-700;
+  }
+
+  .pill-btn {
+    @apply rounded-full border border-sage-200/70 bg-white/85 px-5 py-2.5 text-sm font-bold text-sage-800 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  .section-reveal {
+    @apply translate-y-5 opacity-0 transition-all duration-700 ease-in-out;
+  }
+
+  .section-reveal.is-visible {
+    @apply translate-y-0 opacity-100;
+  }
+
+  .hero-float {
+    animation: floatSoft 6s ease-in-out infinite;
+  }
+
+  .hero-bg-layer {
+    @apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+    background-image: url("/images/soap-neem.jpeg");
+    transition: transform 0.2s ease-out;
+  }
+
+  .hero-overlay {
+    @apply absolute inset-0;
+    background:
+      linear-gradient(105deg, rgba(17, 35, 24, 0.74) 8%, rgba(17, 35, 24, 0.3) 52%, rgba(17, 35, 24, 0.62) 100%),
+      radial-gradient(circle at 72% 22%, rgba(255, 244, 224, 0.26), transparent 42%);
+  }
+
+  .premium-btn {
+    @apply rounded-full px-6 py-3 text-sm font-extrabold tracking-wide text-white transition duration-300 ease-in-out;
+    background: linear-gradient(120deg, #1f3d2b, #365f47 55%, #54785e);
+    box-shadow: 0 14px 30px rgba(31, 61, 43, 0.32);
+  }
+
+  .premium-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 18px 34px rgba(31, 61, 43, 0.4);
+  }
+
+  /* ===== INGREDIENT SECTION STYLING ===== */
+  .ingredients-container {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .ingredients-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Scroll snap for mobile premium feel */
+  @media (max-width: 768px) {
+    .ingredients-container {
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .ingredient-card {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+  }
+
+  /* Card styling and animations */
+  .ingredient-card {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .ingredient-card:hover {
+    @apply -translate-y-2;
+  }
+
+  .ingredient-image-wrapper {
+    @apply relative overflow-hidden rounded-[16px] aspect-square;
+  }
+
+  .ingredient-image-wrapper img {
+    @apply w-full h-full object-cover transition-transform duration-500 ease-out;
+  }
+
+  .ingredient-card:hover .ingredient-image-wrapper img {
+    @apply scale-110;
+  }
+
+  .ingredient-accent-line {
+    @apply h-0.5 w-8 bg-gradient-to-r from-emerald-400 to-sage-400 transition-all duration-300;
+  }
+
+  .ingredient-card:hover .ingredient-accent-line {
+    @apply w-full;
+  }
+
+  .cart-icon-pulse {
+    animation: cartPulse 0.36s ease-out;
+  }
+
+  .cart-badge-pulse {
+    animation: badgePop 0.36s ease-out;
+  }
+
+  .cart-stepper-pop {
+    animation: stepperPop 0.28s ease-out;
+  }
+
+  .wishlist-heart-pop {
+    animation: heartPop 0.28s ease-out;
+  }
+
+  .review-star-pop {
+    animation: reviewStarPop 0.22s ease-out;
+    filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.42));
+  }
+
+  .toast-pop {
+    animation: toastPop 0.26s ease-out;
+  }
+
+  .quick-view-pop {
+    animation: quickViewPop 0.28s ease-out;
+  }
+
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+    animation: skeletonShimmer 1.2s ease-in-out infinite;
+  }
+
+  .timeline-pop {
+    animation: timelinePop 420ms ease-out;
+  }
+
+  .timeline-step-current {
+    animation: timelineStepPulse 1.8s ease-in-out infinite;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  .orders-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(110, 132, 116, 0.38) rgba(255, 255, 255, 0.55);
+  }
+
+  .orders-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .orders-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+  }
+
+  .orders-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(110, 132, 116, 0.48), rgba(55, 84, 63, 0.4));
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+  }
+
+  .orders-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(110, 132, 116, 0.65), rgba(55, 84, 63, 0.56));
+  }
+}
+
+@keyframes floatSoft {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes cartPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes stepperPop {
+  0% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes reviewStarPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes toastPop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) translateX(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+  }
+}
+
+@keyframes quickViewPop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes timelinePop {
+  0% {
+    opacity: 0.7;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes timelineStepPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.14);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes drawerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawerSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes searchExpand {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes searchCollapse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* ====== NEW HOMEPAGE ANIMATIONS ====== */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .section-reveal.is-visible {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .premium-btn {
+    @apply px-8 py-3 rounded-full bg-gradient-to-r from-sage-700 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  .hero-float {
+    animation: floatSoft 4s ease-in-out infinite;
+  }
+
+  /* Mobile drawer animations */
+  @media (max-width: 768px) {
+    .mobile-drawer-enter {
+      animation: drawerSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .mobile-drawer-exit {
+      animation: drawerSlideOut 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .mobile-search-expand {
+      animation: searchExpand 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .mobile-search-collapse {
+      animation: searchCollapse 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+  }
+}
