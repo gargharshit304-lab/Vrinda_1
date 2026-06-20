@@ -1,18 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import SiteNav from "../components/SiteNav";
-import { getOrders } from "../data/orderStorage";
+import { fetchMyOrders } from "../data/orderApi";
 import { clearAuthSession, getAuthToken, USER_STORAGE_KEY } from "../data/authStorage";
 import { fetchUserProfile, updateUserPassword, updateUserProfile } from "../data/userApi";
 import { showToast } from "../data/toastEvents";
 
 const VALID_TABS = ["profile", "orders", "wishlist", "addresses", "settings"];
 
-const wishlistItems = [
-  { id: "W-01", name: "Lemon Fresh Ayur Soap", price: "Rs 349", image: "/images/soap-lemon.jpeg" },
-  { id: "W-02", name: "Almond Milk Moisture Bar", price: "Rs 459", image: "/images/soap-almond.jpeg" },
-  { id: "W-03", name: "Golden Tiger Haldi Soap", price: "Rs 479", image: "/images/soap-golden-tiger.jpeg" }
-];
+
 
 const emptyAddressForm = {
   id: "",
@@ -102,7 +98,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [orders, setOrders] = useState(() => getOrders());
+  const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
@@ -182,14 +178,21 @@ export default function ProfilePage() {
 
     loadProfile();
 
-    const syncOrders = () => setOrders(getOrders());
-    window.addEventListener("storage", syncOrders);
-    window.addEventListener("vrinda-orders-changed", syncOrders);
+    const loadOrders = async () => {
+      try {
+        const data = await fetchMyOrders();
+        if (!cancelled) {
+          setOrders(data);
+        }
+      } catch {
+        // Orders will remain empty if fetch fails.
+      }
+    };
+
+    loadOrders();
 
     return () => {
       cancelled = true;
-      window.removeEventListener("storage", syncOrders);
-      window.removeEventListener("vrinda-orders-changed", syncOrders);
     };
   }, []);
 
@@ -536,18 +539,22 @@ export default function ProfilePage() {
                   {orders.length > 0 ? (
                     <div className="orders-scroll h-[70vh] space-y-4 overflow-y-auto pb-4 pr-1 lg:max-h-[75vh]">
                       {orders.map((order) => {
-                        const isExpanded = expandedOrderId === order.id;
+                        const orderId = order._id || order.id;
+                        const orderDisplay = order.orderNumber || orderId;
+                        const orderDate = order.createdAt || order.date;
+                        const orderTotal = order.totalAmount || order.total || 0;
+                        const isExpanded = expandedOrderId === orderId;
 
                         return (
                           <article
-                            key={order.id}
+                            key={orderId}
                             className="glass-card rounded-3xl border border-white/70 bg-white/65 p-4 shadow-soft"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="space-y-1">
                                 <p className="text-[0.7rem] font-bold uppercase tracking-[0.22em] text-sage-700/75">Order ID</p>
-                                <p className="text-base font-extrabold text-sage-800">{order.id}</p>
-                                <p className="text-sm font-medium text-sage-700">{formatDate(order.date)}</p>
+                                <p className="text-base font-extrabold text-sage-800">{orderDisplay}</p>
+                                <p className="text-sm font-medium text-sage-700">{formatDate(orderDate)}</p>
                               </div>
 
                               <div className="flex items-center gap-2">
@@ -562,7 +569,7 @@ export default function ProfilePage() {
                                 </span>
                                 <button
                                   type="button"
-                                  onClick={() => setExpandedOrderId((current) => (current === order.id ? "" : order.id))}
+                                  onClick={() => setExpandedOrderId((current) => (current === orderId ? "" : orderId))}
                                   className="rounded-full border border-sage-200/80 bg-white/85 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.1em] text-sage-800 transition duration-300 hover:-translate-y-0.5 hover:bg-white"
                                 >
                                   {isExpanded ? "Hide Details" : "View Details"}
@@ -573,8 +580,8 @@ export default function ProfilePage() {
                             {isExpanded ? (
                               <div className="mt-4 rounded-2xl border border-sage-200/70 bg-[#faf7f0]/85 p-4">
                                 <div className="space-y-2">
-                                  {(order.items || []).map((item) => (
-                                    <div key={`${order.id}-${item.id}`} className="flex items-start justify-between gap-3 text-sm">
+                                  {(order.items || []).map((item, idx) => (
+                                    <div key={`${orderId}-${item._id || item.id || idx}`} className="flex items-start justify-between gap-3 text-sm">
                                       <p className="min-w-0 font-semibold text-sage-800">
                                         {item.name} <span className="font-medium text-sage-600">x {item.quantity}</span>
                                       </p>
@@ -586,7 +593,7 @@ export default function ProfilePage() {
                                 <div className="mt-3 h-px bg-sage-200/80" />
                                 <div className="mt-3 flex items-center justify-between">
                                   <p className="text-sm font-bold text-sage-700">Total</p>
-                                  <p className="text-base font-extrabold text-sage-800">{formatInr(order.total || 0)}</p>
+                                  <p className="text-base font-extrabold text-sage-800">{formatInr(orderTotal)}</p>
                                 </div>
                               </div>
                             ) : null}
@@ -605,22 +612,8 @@ export default function ProfilePage() {
               {activeTab === "wishlist" && (
                 <section className="space-y-3">
                   <h2 className="font-display text-4xl font-semibold text-sage-800">Wishlist</h2>
-                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    {wishlistItems.map((item) => (
-                      <article
-                        key={item.id}
-                        className="glass-card group rounded-3xl border border-white/70 bg-white/65 p-4 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(31,61,43,0.12)]"
-                      >
-                        <div className="overflow-hidden rounded-2xl">
-                          <img src={item.image} alt={item.name} className="h-44 w-full object-cover transition duration-700 group-hover:scale-105" />
-                        </div>
-                        <h3 className="mt-3 text-base font-bold text-sage-800">{item.name}</h3>
-                        <p className="text-sm font-semibold text-sage-700">{item.price}</p>
-                        <button className="mt-3 w-full rounded-full bg-sage-700 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.08em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-sage-800">
-                          Move to Cart
-                        </button>
-                      </article>
-                    ))}
+                  <div className="glass-card rounded-2xl border border-white/70 bg-white/65 p-6 text-sm font-medium text-sage-700">
+                    Your wishlist is empty. Browse our shop and add products you love!
                   </div>
                 </section>
               )}
