@@ -233,6 +233,24 @@ export default function ProductDetailPage() {
     window.setTimeout(() => setCartNotice(""), 1800);
   };
 
+  const handleBuyNow = () => {
+    if (isAdminUser) {
+      return;
+    }
+
+    if (!product) {
+      return;
+    }
+
+    if (!getAuthToken()) {
+      navigate("/login", { state: { from: `/product/${productId}` } });
+      return;
+    }
+
+    addToCart(product, 1);
+    navigate("/checkout");
+  };
+
   const handleReviewChange = (event) => {
     const { name, value } = event.target;
     setReviewForm((current) => ({ ...current, [name]: value }));
@@ -269,6 +287,12 @@ export default function ProductDetailPage() {
 
   const selectedRating = Math.min(5, Math.max(1, Number(reviewForm.rating) || 5));
   const visibleRating = hoverRating || selectedRating;
+
+  const averageRating = useMemo(() => {
+    if (!reviews.length) return 0;
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    return Number((sum / reviews.length).toFixed(1));
+  }, [reviews]);
 
   if (loading) {
     return (
@@ -354,11 +378,17 @@ export default function ProductDetailPage() {
 
               <div className="mt-4 flex items-center gap-3">
                 <p className="text-2xl font-extrabold text-sage-800">{displayPrice}</p>
-                <div className="flex items-center gap-1.5 rounded-full bg-sage-700/8 px-3 py-1 text-xs font-bold text-sage-700">
-                  <span className="text-amber-500">★★★★★</span>
-                  <span>{product?.rating || 4.5}</span>
-                  <span className="text-sage-600/80">({product?.reviewCount || 0})</span>
-                </div>
+                {reviews.length > 0 ? (
+                  <div className="flex items-center gap-1.5 rounded-full bg-sage-700/8 px-3 py-1 text-xs font-bold text-sage-700">
+                    <span className="text-amber-500">
+                      {"★".repeat(Math.round(averageRating)) + "☆".repeat(5 - Math.round(averageRating))}
+                    </span>
+                    <span>{averageRating}</span>
+                    <span className="text-sage-600/80">({reviews.length})</span>
+                  </div>
+                ) : (
+                  <span className="text-xs font-semibold text-sage-600/80">(No reviews yet)</span>
+                )}
               </div>
 
               {cartNotice ? (
@@ -392,7 +422,11 @@ export default function ProductDetailPage() {
                     >
                       Add to Cart
                     </button>
-                    <button className="rounded-full border border-sage-300 bg-white/85 px-5 py-3 text-sm font-extrabold tracking-[0.04em] text-sage-800 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:border-sage-500 hover:bg-white">
+                    <button
+                      type="button"
+                      onClick={handleBuyNow}
+                      className="rounded-full border border-sage-300 bg-white/85 px-5 py-3 text-sm font-extrabold tracking-[0.04em] text-sage-800 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:border-sage-500 hover:bg-white"
+                    >
                       Buy Now
                     </button>
                   </div>
@@ -525,11 +559,17 @@ export default function ProductDetailPage() {
         <section className="glass-card rounded-3xl border border-white/70 bg-white/65 p-5 shadow-soft sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-display text-3xl text-sage-800">Reviews</h2>
-            <div className="inline-flex items-center gap-2 rounded-full bg-sage-700/8 px-3 py-1 text-sm font-bold text-sage-700">
-              <span className="text-amber-500">★★★★★</span>
-              <span>{product.rating}</span>
-              <span className="text-sage-600/80">({reviews.length})</span>
-            </div>
+            {reviews.length > 0 ? (
+              <div className="inline-flex items-center gap-2 rounded-full bg-sage-700/8 px-3 py-1 text-sm font-bold text-sage-700">
+                <span className="text-amber-500">
+                  {"★".repeat(Math.round(averageRating)) + "☆".repeat(5 - Math.round(averageRating))}
+                </span>
+                <span>{averageRating}</span>
+                <span className="text-sage-600/80">({reviews.length})</span>
+              </div>
+            ) : (
+              <span className="text-xs font-semibold text-sage-600/80">(No reviews yet)</span>
+            )}
           </div>
 
           {/* Scrollable Reviews Container */}

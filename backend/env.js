@@ -8,18 +8,7 @@ const envPath = path.join(envDir, ".env");
 // Also try loading root .env as a fallback (user may have added keys there)
 const rootEnvPath = path.join(envDir, "..", ".env");
 
-// Load root .env first, then backend/.env to allow backend to override
-try {
-	const rootResult = dotenv.config({ path: rootEnvPath });
-	if (rootResult.error) {
-		// no root env present - that's fine
-	} else {
-		console.log(`[env] Loaded root .env from ${rootEnvPath}`);
-	}
-} catch (err) {
-	// ignore
-}
-
+// Load backend/.env first to allow backend to take precedence, then root .env as fallback
 try {
 	const backendResult = dotenv.config({ path: envPath });
 	if (backendResult.error) {
@@ -29,4 +18,15 @@ try {
 	}
 } catch (err) {
 	console.error("[env] Failed to load backend .env", err && err.message);
+}
+
+try {
+	const rootResult = dotenv.config({ path: rootEnvPath });
+	if (rootResult.error) {
+		// no root env present - that's fine
+	} else {
+		console.log(`[env] Loaded root .env from ${rootEnvPath}`);
+	}
+} catch (err) {
+	// ignore
 }

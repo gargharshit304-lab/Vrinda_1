@@ -763,6 +763,17 @@ export default function AdminPage() {
     productPayload.append("price", String(price));
     productPayload.append("stock", String(unitsAvailable));
     productPayload.append("description", description);
+    productPayload.append("category", category);
+    productPayload.append("tagline", tagline);
+    productPayload.append("ingredients", ingredients);
+    productPayload.append("howToUse", howToUse);
+    productPayload.append("type", type);
+    productPayload.append("weightVolume", weightVolume);
+    productPayload.append("skinConcern", skinConcern);
+    productPayload.append("onSale", String(productForm.onSale));
+    productPayload.append("salePercent", String(salePercent));
+    productPayload.append("rating", String(rating));
+    productPayload.append("features", JSON.stringify(features));
     productPayload.append("image", mainImageFile);
     additionalImageFiles.forEach((file) => {
       productPayload.append("images", file);

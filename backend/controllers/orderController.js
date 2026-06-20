@@ -163,7 +163,7 @@ export const createOrder = async (req, res, next) => {
 
     // Normalize payment method to canonical uppercase token expected by schema
     const normalizedPaymentMethod = String(paymentMethod || "").trim().toUpperCase();
-    const allowedPaymentMethods = new Set(["COD", "FAKE_UPI", "RAZORPAY", "ONLINE"]);
+    const allowedPaymentMethods = new Set(["COD", "RAZORPAY", "ONLINE"]);
     const finalPaymentMethod = allowedPaymentMethods.has(normalizedPaymentMethod) ? normalizedPaymentMethod : "COD";
 
     // Validate items array

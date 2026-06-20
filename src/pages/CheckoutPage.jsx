@@ -319,10 +319,6 @@ export default function CheckoutPage() {
       if (!paymentMethod) {
         nextErrors.paymentMethod = "Please select a payment method.";
       }
-
-      if (paymentMethod === "FAKE_UPI" && !formData.upiId.trim()) {
-        nextErrors.upiId = "Please enter a UPI ID.";
-      }
     }
 
     return nextErrors;
@@ -542,7 +538,7 @@ export default function CheckoutPage() {
         discount: appliedDiscount,
         couponCode: appliedCouponCode,
         status: "Pending",
-        paymentMethod: formData.paymentMethod === "upi" ? "Fake UPI" : "Cash on Delivery",
+        paymentMethod: paymentMethod === "RAZORPAY" ? "Pay Now" : "Cash on Delivery",
         deliveryInfo: "Expected delivery in 3-5 business days",
         shippingAddress
       };
@@ -619,13 +615,12 @@ export default function CheckoutPage() {
                 return (
                   <div
                     key={step.id}
-                    className={`rounded-2xl border px-3 py-3 transition duration-300 ${
-                      isActive
-                        ? "border-sage-500 bg-sage-700/10"
-                        : isDone
+                    className={`rounded-2xl border px-3 py-3 transition duration-300 ${isActive
+                      ? "border-sage-500 bg-sage-700/10"
+                      : isDone
                         ? "border-emerald-200 bg-emerald-50"
                         : "border-sage-200/80 bg-white/70"
-                    }`}
+                      }`}
                   >
                     <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-sage-700/75">Step {step.id}</p>
                     <p className="mt-1 text-sm font-semibold text-sage-800">{step.title}</p>
@@ -793,8 +788,8 @@ export default function CheckoutPage() {
                     placeholder="10-digit phone number"
                     error={errors.phone}
                   />
-                  <Field label="City" name="city" value={formData.city} onChange={handleChange} placeholder="Jaipur" error={errors.city} />
-                  <Field label="State" name="state" value={formData.state} onChange={handleChange} placeholder="Rajasthan" error={errors.state} />
+                  <Field label="City" name="city" value={formData.city} onChange={handleChange} placeholder="City" error={errors.city} />
+                  <Field label="State" name="state" value={formData.state} onChange={handleChange} placeholder="State" error={errors.state} />
                   <Field
                     label="Address Line"
                     name="addressLine"
@@ -810,7 +805,7 @@ export default function CheckoutPage() {
                     name="pincode"
                     value={formData.pincode}
                     onChange={handleChange}
-                    placeholder="302001"
+                    placeholder="Pincode"
                     error={errors.pincode}
                   />
                 </div>
@@ -840,42 +835,16 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="FAKE_UPI"
-                      checked={paymentMethod === "FAKE_UPI"}
-                      onChange={() => setPaymentMethod("FAKE_UPI")}
-                      className="mt-1"
-                    />
-                    <div>
-                      <p className="text-sm font-bold text-sage-800">Fake UPI</p>
-                      <p className="text-xs text-sage-700">UI demo only. No real payment integration.</p>
-                    </div>
-                  </label>
-
-                  <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-sage-200/80 bg-white/85 p-4 transition hover:border-sage-300">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
                       value="RAZORPAY"
                       checked={paymentMethod === "RAZORPAY"}
                       onChange={() => setPaymentMethod("RAZORPAY")}
                       className="mt-1"
                     />
                     <div>
-                      <p className="text-sm font-bold text-sage-800">Online Payment (Razorpay)</p>
-                      <p className="text-xs text-sage-700">Pay securely using Razorpay checkout.</p>
+                      <p className="text-sm font-bold text-sage-800">Pay Now</p>
+                      <p className="text-xs text-sage-700">Pay securely using Cards, UPI, NetBanking, or Wallet.</p>
                     </div>
                   </label>
-
-                  {paymentMethod === "FAKE_UPI" ? (
-                    <Field
-                      label="UPI ID"
-                      name="upiId"
-                      value={formData.upiId}
-                      onChange={handleChange}
-                      placeholder="name@upi"
-                      error={errors.upiId}
-                    />
-                  ) : null}
                 </div>
                 {errors.paymentMethod ? <p className="mt-2 text-xs font-medium text-rose-600">{errors.paymentMethod}</p> : null}
               </div>
@@ -895,9 +864,8 @@ export default function CheckoutPage() {
                 <section className="rounded-2xl border border-sage-200/80 bg-white/85 p-4">
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-sage-700/75">Payment</p>
                   <p className="mt-1 text-sm font-semibold text-sage-800">
-                    {paymentMethod === "FAKE_UPI" ? "Fake UPI" : paymentMethod === "RAZORPAY" ? "Online Payment (Razorpay)" : "Cash on Delivery"}
+                    {paymentMethod === "RAZORPAY" ? "Pay Now" : "Cash on Delivery"}
                   </p>
-                  {paymentMethod === "FAKE_UPI" ? <p className="text-sm text-sage-700">UPI ID: {formData.upiId}</p> : null}
                 </section>
 
                 <section className="rounded-2xl border border-sage-200/80 bg-white/85 p-4">
@@ -996,9 +964,8 @@ export default function CheckoutPage() {
 }
 
 function Field({ label, name, value, onChange, placeholder, error, as = "input", className = "" }) {
-  const commonClassName = `w-full rounded-2xl border px-4 py-3 text-sm text-sage-800 outline-none transition focus:border-sage-400 ${
-    error ? "border-rose-300 bg-rose-50/60" : "border-sage-200/85 bg-white"
-  }`;
+  const commonClassName = `w-full rounded-2xl border px-4 py-3 text-sm text-sage-800 outline-none transition focus:border-sage-400 ${error ? "border-rose-300 bg-rose-50/60" : "border-sage-200/85 bg-white"
+    }`;
 
   return (
     <label className={`block space-y-1.5 ${className}`}>

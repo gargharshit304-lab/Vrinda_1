@@ -31,9 +31,20 @@ export const uploadProductImages = (req, res, next) => {
       return next();
     }
 
-    const normalizedError = err instanceof Error ? err : new Error(String(err));
+    let errorMessage = "";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    } else if (typeof err === "string") {
+      errorMessage = err;
+    } else if (err && typeof err === "object") {
+      errorMessage = err.message || err.error?.message || JSON.stringify(err);
+    } else {
+      errorMessage = "Image upload failed. Please verify Cloudinary configuration and file format.";
+    }
+
+    const normalizedError = err instanceof Error ? err : new Error(errorMessage);
     normalizedError.statusCode = normalizedError.statusCode || 400;
-    normalizedError.message = normalizedError.message || "Image upload failed. Please verify Cloudinary configuration and file format.";
+    normalizedError.message = errorMessage;
     return next(normalizedError);
   });
 };

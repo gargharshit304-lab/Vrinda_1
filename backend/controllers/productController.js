@@ -127,16 +127,45 @@ export const createProduct = async (req, res, next) => {
       throw error;
     }
 
+    let features = [];
+    if (body.features) {
+      if (Array.isArray(body.features)) {
+        features = body.features;
+      } else if (typeof body.features === "string") {
+        try {
+          features = JSON.parse(body.features);
+          if (!Array.isArray(features)) {
+            features = [body.features];
+          }
+        } catch {
+          features = body.features.split(",").map((f) => f.trim()).filter(Boolean);
+        }
+      }
+    }
+
+    const onSale = body.onSale === "true" || body.onSale === true;
+    const salePercent = Number(body.salePercent) || 0;
+    const rating = body.rating !== undefined ? Number(body.rating) : 4.5;
+
     const created = await Product.create({
       name,
       slug,
       category: category || "All Products",
+      tagline: body.tagline || "",
       type: body.type || "",
       price,
       stock: stock ?? 0,
       isDeleted: false,
       isActive: true,
       description: description ?? "",
+      onSale,
+      salePercent,
+      rating,
+      ingredients: body.ingredients || "",
+      howToUse: body.howToUse || "",
+      features: features.length ? features : undefined,
+      weightVolume: body.weightVolume || "",
+      skinConcern: body.skinConcern || "",
       image: mainImageUrl || additionalImageUrls[0] || "",
       images: [mainImageUrl, ...additionalImageUrls].filter(Boolean)
     });
