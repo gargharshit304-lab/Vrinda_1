@@ -208,9 +208,6 @@ export default function HomePage() {
                 <Link to="/shop" className="premium-btn">
                   Explore Collection
                 </Link>
-                <Link to="/about" className="px-8 py-3 rounded-full border border-earth-100/60 text-earth-100 font-semibold hover:bg-white/10 transition">
-                  Build Your Ritual
-                </Link>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4 text-sm font-semibold text-earth-100">

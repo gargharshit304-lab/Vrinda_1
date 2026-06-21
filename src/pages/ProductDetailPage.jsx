@@ -134,7 +134,7 @@ export default function ProductDetailPage() {
     }
   }, [similarProducts]);
 
-  const mainImage = product?.images?.[0] || product?.image || "/images/soap-golden-tiger.jpeg";
+  const mainImage = product?.images?.[activeImageIndex] || product?.image || "/images/soap-golden-tiger.jpeg";
 
   const infoContent = useMemo(() => {
     if (!product) {
