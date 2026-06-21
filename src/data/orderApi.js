@@ -15,18 +15,21 @@ const buildQueryString = (params = {}) => {
   return queryString ? `?${queryString}` : "";
 };
 
-export const createOrderRequest = async ({ items, shippingAddress, paymentMethod }) => {
-  console.log("[orderApi] Creating order with payload:", { items, shippingAddress, paymentMethod });
+export const createOrderRequest = async ({ items, shippingAddress, paymentMethod, couponCode, discount }) => {
+  console.log("[orderApi] Creating order with payload:", { items, shippingAddress, paymentMethod, couponCode, discount });
   return apiRequest("/orders", {
     method: "POST",
     auth: true,
     body: {
       items,
       shippingAddress,
-      paymentMethod
+      paymentMethod,
+      couponCode,
+      discount
     }
   });
 };
+
 
 export const fetchOrders = async (params = {}) => {
   const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : "";

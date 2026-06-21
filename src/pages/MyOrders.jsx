@@ -402,12 +402,12 @@ export default function MyOrders() {
       <SiteNav />
 
       <main className="mx-auto mt-6 w-[min(1120px,94vw)] overflow-hidden">
-        <section className="glass-card rounded-[30px] border border-white/70 bg-white/65 p-5 shadow-soft sm:p-7">
+        <section className="glass-card rounded-[30px] border border-white/70 bg-white/65 p-4 shadow-soft sm:p-7">
           <div className="sticky top-3 z-20 -mx-5 mb-4 border-b border-white/60 bg-white/80 px-5 pb-4 pt-1 backdrop-blur-xl sm:-mx-7 sm:px-7">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-sage-700/75">Order History</p>
-                <h1 className="mt-1 font-display text-4xl font-semibold text-sage-800">My Orders</h1>
+                <h1 className="mt-1 font-display text-xl font-semibold text-sage-800 sm:text-4xl">My Orders</h1>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sage-700">
                   Track every order you have placed, including its current status, products, and real-time delivery timeline.
                 </p>

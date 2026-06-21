@@ -52,8 +52,8 @@ export default function CartPage() {
       <div className="pb-16">
         <SiteNav />
         <main className="mx-auto w-[min(1200px,94vw)] pt-6">
-          <section className="glass-card rounded-[28px] border border-white/70 bg-white/70 p-10 text-center shadow-soft">
-            <h2 className="font-display text-4xl text-sage-800">{CART_LOGIN_REQUIRED_MESSAGE}</h2>
+          <section className="glass-card rounded-[28px] border border-white/70 bg-white/70 p-6 text-center shadow-soft sm:p-10">
+            <h2 className="font-display text-2xl text-sage-800 sm:text-4xl">{CART_LOGIN_REQUIRED_MESSAGE}</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-sage-700">
               Sign in to save items and continue your checkout securely.
             </p>
@@ -104,10 +104,10 @@ export default function CartPage() {
       <SiteNav />
 
       <main className="mx-auto w-[min(1200px,94vw)] pt-6">
-        <div className="mb-5 flex items-end justify-between gap-4">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-2 sm:gap-4">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.24em] text-sage-700/70">Your Bag</p>
-            <h1 className="mt-2 font-display text-5xl leading-none text-sage-800">Cart</h1>
+            <h1 className="mt-2 font-display text-3xl leading-none text-sage-800 sm:text-5xl">Cart</h1>
           </div>
           <Link to="/shop" className="text-sm font-semibold text-sage-700 transition duration-300 hover:text-sage-900">
             Continue shopping
@@ -115,8 +115,8 @@ export default function CartPage() {
         </div>
 
         {cartItems.length === 0 ? (
-          <section className="glass-card rounded-[28px] border border-white/70 bg-white/70 p-10 text-center shadow-soft">
-            <h2 className="font-display text-4xl text-sage-800">Your cart is empty</h2>
+          <section className="glass-card rounded-[28px] border border-white/70 bg-white/70 p-6 text-center shadow-soft sm:p-10">
+            <h2 className="font-display text-2xl text-sage-800 sm:text-4xl">Your cart is empty</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-sage-700">
               Add a few Vrinda essentials to your cart and come back to review your order.
             </p>

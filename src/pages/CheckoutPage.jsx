@@ -7,7 +7,7 @@ import { createOrderRequest } from "../data/orderApi";
 import { fetchUserProfile } from "../data/userApi";
 import { getAuthToken } from "../data/authStorage";
 import { applyCouponRequest, getPublicCouponsRequest } from "../data/couponApi";
-import { createRazorpayOrder, reportRazorpayPaymentFailure, verifyRazorpayPayment } from "../data/paymentApi";
+import { createRazorpayOrder, verifyRazorpayPayment } from "../data/paymentApi";
 import loadRazorpayScript from "../utils/loadRazorpay";
 import { showToast } from "../data/toastEvents";
 
@@ -386,20 +386,17 @@ export default function CheckoutPage() {
         discount: appliedDiscount
       };
 
-      // If online payment via Razorpay selected, we create the order first, then open Razorpay checkout
+      // If online payment via Razorpay selected, create Razorpay order only (NO MongoDB order yet)
       if (paymentMethod === "RAZORPAY") {
-        const apiOrder = await createOrderRequest(orderPayload);
+        const amountToPay = finalTotal;
 
-        const mongoOrderId = apiOrder?._id || apiOrder?.id || apiOrder?.orderNumber;
-        const amountToPay = Number(apiOrder?.totalAmount) || finalTotal;
+        console.log("[checkout] Creating Razorpay order (no DB order)");
 
-        console.log("Creating Razorpay order");
-
-        // Create Razorpay order on backend
+        // Create Razorpay order on backend — NO MongoDB order is created here
         let razorOrder;
         try {
-          console.log("[checkout] Creating backend order for Razorpay", { amountToPay, mongoOrderId });
-          razorOrder = await createRazorpayOrder(amountToPay, mongoOrderId);
+          console.log("[checkout] Creating Razorpay order with amount:", amountToPay);
+          razorOrder = await createRazorpayOrder(amountToPay);
           console.log("[checkout] createRazorpayOrder response:", razorOrder);
         } catch (err) {
           console.error("[checkout] createRazorpayOrder failed:", err);
@@ -418,6 +415,13 @@ export default function CheckoutPage() {
         const rOrder = razorOrder?.order || razorOrder;
         const rKey = razorOrder?.key || (rOrder && rOrder.key) || (window?.RAZORPAY_KEY_ID || null) || razorOrder?.id;
 
+        // Build the order payload to send during verification
+        const orderItems = cartItems.map((item) => ({
+          productId: item.productId || item.id,
+          quantity: Number(item.quantity || 1),
+          price: Number(item.price || 0)
+        }));
+
         const options = {
           key: rKey || razorOrder?.key,
           amount: rOrder?.amount || razorOrder?.amount || Math.round(amountToPay * 100),
@@ -431,41 +435,40 @@ export default function CheckoutPage() {
             contact: formData.phone || profile?.phone || ""
           },
           modal: {
-            ondismiss: async function () {
-              try {
-                console.log("Payment popup closed");
-                await reportRazorpayPaymentFailure({
-                  orderId: mongoOrderId,
-                  reason: "cancelled_by_user"
-                });
-                showToast("Payment cancelled", "error");
-              } catch (dismissErr) {
-                console.error("[checkout] Failed to report popup dismissal:", dismissErr);
-              }
+            ondismiss: function () {
+              console.log("Payment popup closed by user");
+              showToast("Payment cancelled", "error");
             }
           },
           theme: { color: "#1f4d3f" },
           handler: async function (response) {
             try {
+              // Verify payment AND create MongoDB order in one call
               const verifyResp = await verifyRazorpayPayment({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                orderId: mongoOrderId
+                items: orderItems,
+                shippingAddress,
+                paymentMethod: "RAZORPAY",
+                couponCode: appliedCouponCode,
+                discount: appliedDiscount
               });
 
               if (verifyResp && verifyResp.success) {
+                const createdOrder = verifyResp.order;
+
                 // finalize frontend state
                 const orderData = {
-                  id: apiOrder?.orderNumber || mongoOrderId,
-                  date: apiOrder?.createdAt || new Date().toISOString(),
+                  id: createdOrder?.orderNumber || createdOrder?._id,
+                  date: createdOrder?.createdAt || new Date().toISOString(),
                   items: cartItems.map((item) => ({
                     id: item.productId || item.id,
                     name: item.name,
                     price: Number(item.price || 0),
                     quantity: Number(item.quantity || 0)
                   })),
-                  total: Number(apiOrder?.totalAmount) || amountToPay,
+                  total: Number(createdOrder?.totalAmount) || amountToPay,
                   discount: appliedDiscount,
                   couponCode: appliedCouponCode,
                   status: "Pending",
@@ -501,16 +504,8 @@ export default function CheckoutPage() {
 
           console.log("[checkout] Initializing Razorpay popup", options);
           const rzp = new window.Razorpay(options);
-          rzp.on("payment.failed", async function (response) {
+          rzp.on("payment.failed", function (response) {
             console.error("Razorpay payment failed:", response);
-            try {
-              await reportRazorpayPaymentFailure({
-                orderId: mongoOrderId,
-                reason: response?.error?.description || response?.error?.reason || "payment_failed"
-              });
-            } catch (reportErr) {
-              console.error("[checkout] Failed to report payment failure:", reportErr);
-            }
             showToast("Payment failed", "error");
           });
 
@@ -576,10 +571,10 @@ export default function CheckoutPage() {
       <SiteNav />
 
       <main className="mx-auto w-[min(1200px,94vw)] pt-6">
-        <div className="mb-5 flex items-end justify-between gap-4">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-2 sm:gap-4">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.24em] text-sage-700/70">Secure Checkout</p>
-            <h1 className="mt-2 font-display text-5xl leading-none text-sage-800">Checkout</h1>
+            <h1 className="mt-2 font-display text-3xl leading-none text-sage-800 sm:text-5xl">Checkout</h1>
           </div>
           <Link to="/cart" className="text-sm font-semibold text-sage-700 transition duration-300 hover:text-sage-900">
             Back to cart
@@ -599,7 +594,7 @@ export default function CheckoutPage() {
         ) : null}
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
-          <form onSubmit={handleSubmit} className="glass-card rounded-[30px] border border-white/70 bg-white/72 p-5 shadow-soft md:p-7">
+          <form onSubmit={handleSubmit} className="glass-card overflow-hidden rounded-[30px] border border-white/70 bg-white/72 p-4 shadow-soft sm:p-5 md:p-7">
             <div className="mb-5">
               <h2 className="font-display text-3xl text-sage-800">Checkout Steps</h2>
               <p className="mt-2 text-sm leading-relaxed text-sage-700">
@@ -635,7 +630,7 @@ export default function CheckoutPage() {
                 <h3 className="mb-4 text-sm font-extrabold uppercase tracking-[0.16em] text-sage-800">Apply Coupon</h3>
 
                 {/* Input and Apply Button */}
-                <div className="flex gap-2 mb-3">
+                <div className="flex flex-col gap-2 mb-3 sm:flex-row">
                   <input
                     type="text"
                     value={couponCode}

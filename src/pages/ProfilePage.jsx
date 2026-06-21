@@ -447,7 +447,7 @@ export default function ProfilePage() {
       <SiteNav />
       <main className="mx-auto mt-6 w-[min(1200px,94vw)]">
         <section className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="glass-card rounded-3xl border border-white/70 bg-[#f8f3ea]/90 p-5 shadow-[0_16px_30px_rgba(31,61,43,0.08)] lg:sticky lg:top-28">
+          <aside className="glass-card rounded-3xl border border-white/70 bg-[#f8f3ea]/90 p-4 shadow-[0_16px_30px_rgba(31,61,43,0.08)] sm:p-5 lg:sticky lg:top-28">
             <div className="rounded-2xl border border-white/70 bg-white/70 p-4 text-center shadow-sm">
               <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-sage-700 to-sage-500 text-lg font-extrabold text-white shadow-md">
                 {initials}
@@ -472,9 +472,9 @@ export default function ProfilePage() {
             </div>
           </aside>
 
-          <section className="space-y-4">
+          <section className="min-w-0 space-y-4">
             <div className="glass-card rounded-2xl border border-white/70 bg-white/65 p-2 lg:hidden">
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
                 <MobileTab label="Profile" active={activeTab === "profile"} onClick={() => openTab("profile")} />
                 <MobileTab label="Orders" active={activeTab === "orders"} onClick={() => openTab("orders")} />
                 <MobileTab label="Wishlist" active={activeTab === "wishlist"} onClick={() => openTab("wishlist")} />

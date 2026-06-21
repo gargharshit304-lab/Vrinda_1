@@ -166,6 +166,14 @@ export const createOrder = async (req, res, next) => {
     const allowedPaymentMethods = new Set(["COD", "RAZORPAY", "ONLINE"]);
     const finalPaymentMethod = allowedPaymentMethods.has(normalizedPaymentMethod) ? normalizedPaymentMethod : "COD";
 
+    // Block Razorpay orders — they must be created via /payment/verify after payment success
+    if (finalPaymentMethod === "RAZORPAY" || finalPaymentMethod === "ONLINE") {
+      return res.status(400).json({
+        success: false,
+        message: "Razorpay orders cannot be created directly. Use the payment flow."
+      });
+    }
+
     // Validate items array
     if (!Array.isArray(items) || !items.length) {
       console.log("[createOrder] Validation failed: Items array is empty or not an array");
@@ -283,15 +291,13 @@ export const createOrder = async (req, res, next) => {
       throw error;
     }
 
-    const isRazorpayOrder = finalPaymentMethod === "RAZORPAY";
-
     const order = await Order.create({
       orderNumber: buildOrderNumber(),
       user: req.user._id,
       items: normalizedItems,
       shippingAddress: normalizedShippingAddress,
       paymentMethod: finalPaymentMethod,
-      paymentStatus: isRazorpayOrder ? "pending" : "pending",
+      paymentStatus: "pending",
       isPaid: false,
       couponCode: couponCode ? couponCode.toUpperCase() : null,
       discount: validatedDiscount,
@@ -302,7 +308,7 @@ export const createOrder = async (req, res, next) => {
         outForDeliveryAt: null,
         deliveredAt: null
       },
-      orderStatus: "pending",
+      orderStatus: "confirmed",
       subtotal,
       deliveryFee,
       totalAmount: totalPrice
@@ -404,7 +410,10 @@ export const getOrders = async (req, res, next) => {
   try {
     const isAdmin = req.user?.role === "admin";
     const { month, status } = req.query || {};
-    const filter = isAdmin ? buildAdminOrderFilter({ month, status }) : { user: req.user._id };
+    const baseFilter = isAdmin ? buildAdminOrderFilter({ month, status }) : { user: req.user._id };
+
+    // Exclude payment_failed orders so cancelled/failed Razorpay payments never appear
+    const filter = { ...baseFilter, paymentStatus: { $ne: "failed" }, orderStatus: { $ne: "payment_failed" } };
 
     let query = Order.find(filter)
       .populate("items.product", "name image price")
@@ -450,7 +459,12 @@ export const getOrders = async (req, res, next) => {
 
 export const getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user._id })
+    // Exclude payment_failed orders so cancelled/failed Razorpay payments never appear
+    const orders = await Order.find({
+      user: req.user._id,
+      paymentStatus: { $ne: "failed" },
+      orderStatus: { $ne: "payment_failed" }
+    })
       .populate("items.product", "name image price")
       .sort({ createdAt: -1 });
 

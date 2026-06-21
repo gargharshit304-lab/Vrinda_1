@@ -383,7 +383,7 @@ export default function SiteNav() {
                 <div data-cart-dropdown-root className="relative">
                 <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
                 {cartDropdownOpen ? (
-                    <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
+                    <div className="fixed inset-x-0 top-[70px] z-50 mx-auto w-[min(90vw,380px)] sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mx-0 sm:mt-3 sm:w-[380px]">
                     <CartDropdown
                       cartItems={cartItems}
                       cartTotal={cartTotal}
@@ -415,7 +415,7 @@ export default function SiteNav() {
                   <div data-cart-dropdown-root className="relative">
                     <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
                     {cartDropdownOpen ? (
-                      <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
+                    <div className="fixed inset-x-0 top-[70px] z-50 mx-auto w-[min(90vw,380px)] sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mx-0 sm:mt-3 sm:w-[380px]">
                         <CartDropdown
                           cartItems={cartItems}
                           cartTotal={cartTotal}
@@ -523,7 +523,7 @@ export default function SiteNav() {
             <div data-cart-dropdown-root className="relative">
               <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
               {cartDropdownOpen ? (
-                <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
+                <div className="fixed inset-x-0 top-[70px] z-50 mx-auto w-[min(90vw,380px)] sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mx-0 sm:mt-3 sm:w-[380px]">
                   <CartDropdown
                     cartItems={cartItems}
                     cartTotal={cartTotal}
@@ -580,8 +580,8 @@ export default function SiteNav() {
       </div>
 
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
-          mobileOpen ? "mt-4 max-h-[28rem] opacity-100" : "max-h-0 opacity-0"
+        className={`overflow-hidden transition-all duration-300 ease-in-out lg:hidden ${
+          mobileOpen ? "mt-4 max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <nav className="flex flex-col gap-2 pb-1 pt-1">
