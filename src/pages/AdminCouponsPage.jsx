@@ -490,7 +490,7 @@ export default function AdminCouponsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[700px] text-sm">
               <thead>
                 <tr className="border-b border-sage-200 bg-sage-50">
                   <th className="px-4 py-3 text-left font-semibold text-sage-800">Code</th>

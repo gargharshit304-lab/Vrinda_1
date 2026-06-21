@@ -393,7 +393,7 @@ export default function ShopPage() {
               </div>
             ) : null}
 
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {productsLoading
                 ? Array.from({ length: 6 }).map((_, index) => (
                     <article
@@ -425,7 +425,7 @@ export default function ShopPage() {
                           navigate(`/product/${product.id}`);
                         }
                       }}
-                      className="glass-card group cursor-pointer overflow-hidden rounded-3xl border border-white/70 transition duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-[0_26px_44px_rgba(31,61,43,0.18)]"
+                      className="glass-card group cursor-pointer overflow-hidden rounded-3xl border border-white/70 transition duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-[0_26px_44px_rgba(31,61,43,0.18)] h-full flex flex-col"
                     >
                       <div className="relative h-56 overflow-hidden">
                         <button
@@ -464,11 +464,13 @@ export default function ShopPage() {
                           Quick View
                         </button>
                       </div>
-                      <div className="space-y-2.5 p-5">
-                        <p className="text-[0.66rem] font-bold uppercase tracking-[0.22em] text-sage-700/75">{product.category}</p>
-                        <h2 className="text-lg font-extrabold text-sage-800">{product.name}</h2>
-                        <p className="text-sm text-sage-600">{product.tagline || product.copy}</p>
-                        <div className="flex items-center justify-between gap-3 pt-1">
+                      <div className="flex-1 flex flex-col justify-between p-5 space-y-2.5">
+                        <div className="space-y-2">
+                          <p className="text-[0.66rem] font-bold uppercase tracking-[0.22em] text-sage-700/75">{product.category}</p>
+                          <h2 className="text-lg font-extrabold text-sage-800 break-words">{product.name}</h2>
+                          <p className="text-sm text-sage-600 break-words">{product.tagline || product.copy}</p>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 pt-2">
                           <span className="font-bold text-sage-700">{formatInr(getEffectivePrice(product))}</span>
                           {isAdminUser ? (
                             <span className="text-right text-xs font-semibold text-sage-700">Admin accounts cannot purchase products</span>

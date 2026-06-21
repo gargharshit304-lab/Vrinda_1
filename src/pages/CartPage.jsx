@@ -140,7 +140,7 @@ export default function CartPage() {
                       <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0">
-                      <h2 className="truncate text-lg font-extrabold text-sage-800">{item.name}</h2>
+                      <h2 className="break-words text-lg font-extrabold text-sage-800">{item.name}</h2>
                       <p className="mt-1 text-sm font-semibold text-sage-700">{formatInr(item.price)}</p>
                       <div className="mt-3 inline-flex items-center rounded-full border border-sage-200/80 bg-white px-2 py-1 shadow-sm">
                         <button

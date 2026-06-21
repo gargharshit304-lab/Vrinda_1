@@ -720,7 +720,7 @@ export default function ProfilePage() {
                               ) : null}
                             </div>
                             <p className="mt-2 text-sm font-semibold text-sage-700">{address.phone}</p>
-                            <p className="text-sm text-sage-700/85">
+                            <p className="text-sm text-sage-700/85 break-words">
                               {address.addressLine}, {address.city}, {address.state} - {address.pincode}
                             </p>
                             <div className="mt-4 flex flex-wrap gap-2">
@@ -856,7 +856,7 @@ function MobileTab({ label, active, onClick }) {
 
 function ProfileField({ label, value, onChange, disabled = false, placeholder = "" , className = ""}) {
   return (
-    <label className={`text-sm font-bold text-sage-800 ${className}`}>
+    <label className={`block text-sm font-bold text-sage-800 ${className}`}>
       {label}
       <input
         value={value}

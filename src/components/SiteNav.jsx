@@ -383,7 +383,7 @@ export default function SiteNav() {
                 <div data-cart-dropdown-root className="relative">
                 <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
                 {cartDropdownOpen ? (
-                    <div className="absolute right-0 top-full z-50 mt-3 w-[calc(100vw-2rem)] max-w-none sm:w-[350px] sm:max-w-[350px]">
+                    <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
                     <CartDropdown
                       cartItems={cartItems}
                       cartTotal={cartTotal}
@@ -415,7 +415,7 @@ export default function SiteNav() {
                   <div data-cart-dropdown-root className="relative">
                     <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
                     {cartDropdownOpen ? (
-                      <div className="absolute right-0 top-full z-50 mt-3 w-[calc(100vw-2rem)] max-w-none sm:w-[350px] sm:max-w-[350px]">
+                      <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
                         <CartDropdown
                           cartItems={cartItems}
                           cartTotal={cartTotal}
@@ -523,7 +523,7 @@ export default function SiteNav() {
             <div data-cart-dropdown-root className="relative">
               <CartLink count={cartCount} pulse={cartPulse} onClick={toggleCartDropdown} />
               {cartDropdownOpen ? (
-                <div className="absolute right-0 top-full z-50 mt-3 w-[calc(100vw-2rem)] max-w-none sm:w-[350px] sm:max-w-[350px]">
+                <div className="absolute right-0 top-full z-50 mt-3 w-[90vw] max-w-[380px] sm:w-[420px] sm:max-w-[420px] lg:w-[350px] lg:max-w-[350px]">
                   <CartDropdown
                     cartItems={cartItems}
                     cartTotal={cartTotal}
@@ -876,7 +876,7 @@ function CartDropdown({ cartItems, cartTotal, onClose, onQuantityChange, onRemov
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="truncate text-sm font-bold text-sage-800">{item.name}</h3>
+                      <h3 className="break-words text-sm font-bold text-sage-800">{item.name}</h3>
                       <p className="mt-0.5 text-xs font-semibold text-sage-700">Rs {item.price}</p>
                     </div>
 

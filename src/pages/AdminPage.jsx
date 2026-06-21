@@ -1075,12 +1075,12 @@ export default function AdminPage() {
             <p className="text-xs font-semibold text-sage-600">Admin control panel</p>
           </div>
 
-          <nav className="grid gap-2">
+          <nav className="flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
             {sections.map((section) => (
               <button
                 key={section.key}
                 onClick={() => setActiveSection(section.key)}
-                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm font-extrabold transition ${
+                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm font-extrabold transition shrink-0 ${
                   activeSection === section.key
                     ? "border-sage-700 bg-sage-700 text-white shadow"
                     : "border-sage-200 bg-white/80 text-sage-800 hover:-translate-y-0.5 hover:shadow"
@@ -1535,7 +1535,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className="min-h-0 flex-1 overflow-auto">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full min-w-[800px] text-left text-xs">
                     <thead className="orders-table-head text-[10px] font-extrabold uppercase tracking-wider text-sage-600">
                       <tr className="bg-white">
                         <th className="w-[14%] px-2.5 py-2">Order ID</th>

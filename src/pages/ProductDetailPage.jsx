@@ -345,7 +345,7 @@ export default function ProductDetailPage() {
                 key={mainImage}
                 src={mainImage}
                 alt={product?.name || "Product"}
-                className="h-[360px] w-full object-cover transition duration-700 ease-out group-hover:scale-105 sm:h-[460px]"
+                className="h-64 w-full object-cover transition duration-700 ease-out group-hover:scale-105 sm:h-96 md:h-[460px]"
                 onError={(e) => {
                   e.target.src = "/images/soap-golden-tiger.jpeg";
                 }}

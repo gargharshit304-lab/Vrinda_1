@@ -64,8 +64,8 @@ export default function AdminContactMessages() {
                 {messages.map((m) => (
                   <tr key={m._id} className="border-t border-sage-100 even:bg-[#fffdf8]">
                     <td className="px-4 py-3 align-top text-sm text-sage-800">{m.name}</td>
-                    <td className="px-4 py-3 align-top text-sm text-sage-700">{m.email}</td>
-                    <td className="px-4 py-3 align-top text-sm text-sage-700">{m.message}</td>
+                    <td className="px-4 py-3 align-top text-sm text-sage-700 break-words">{m.email}</td>
+                    <td className="px-4 py-3 align-top text-sm text-sage-700 break-words">{m.message}</td>
                     <td className="px-4 py-3 align-top text-sm text-sage-600">{new Date(m.createdAt).toLocaleString()}</td>
                     <td className="px-4 py-3 align-top">
                       <a

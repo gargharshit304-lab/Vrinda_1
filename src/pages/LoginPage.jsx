@@ -224,7 +224,7 @@ export default function LoginPage() {
     <div className="pb-10">
       <SiteNav />
       <main className="mx-auto mt-6 grid w-[min(1280px,94vw)] overflow-hidden rounded-[32px] border border-sage-200/80 bg-white/50 shadow-soft backdrop-blur lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="relative min-h-[380px] overflow-hidden p-0">
+        <section className="relative min-h-[220px] sm:min-h-[320px] lg:min-h-[380px] overflow-hidden p-0">
           <style>{`
             .kenburns { transform-origin: center; will-change: transform; }
             .kenburns-active { animation-name: kenburns; animation-duration: 12s; animation-timing-function: cubic-bezier(0.4,0,0.2,1); animation-fill-mode: both; }
@@ -238,7 +238,7 @@ export default function LoginPage() {
             .slide-fade, .kenburns { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
           `}</style>
 
-          <div className="relative h-full w-full overflow-hidden rounded-l-[32px]">
+          <div className="relative h-full w-full overflow-hidden rounded-t-[32px] lg:rounded-l-[32px] lg:rounded-tr-none">
             {slides.map((slide, idx) => {
               const active = idx === slideIndex;
               return (

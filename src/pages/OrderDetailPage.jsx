@@ -245,7 +245,7 @@ export default function OrderDetailPage() {
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <p className="text-[0.7rem] font-bold uppercase tracking-[0.24em] text-sage-700/70">Order Info</p>
-                        <p className="mt-2 text-2xl font-extrabold text-sage-800">{order.orderNumber || order._id}</p>
+                        <p className="mt-2 text-2xl font-extrabold text-sage-800 break-all">{order.orderNumber || order._id}</p>
                         <p className="mt-1 text-sm text-sage-600">Date placed: {formatDateTime(order.createdAt)}</p>
                       </div>
 
@@ -316,70 +316,125 @@ export default function OrderDetailPage() {
                     </div>
 
                     <div key={timelineKey} className="mt-6">
-                      <div className="relative overflow-hidden px-1 pb-10 pt-2 sm:px-3">
-                        <div className="absolute left-6 right-6 top-8 h-1 rounded-full bg-slate-200/90 sm:left-8 sm:right-8" />
+                      {/* Mobile Timeline (stacked vertically) */}
+                      <div className="md:hidden space-y-6 pl-4 relative mt-6">
+                        {/* Vertical Progress Line */}
+                        <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-slate-200/90" />
                         <div
-                          className="absolute left-6 top-8 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 shadow-[0_0_18px_rgba(34,197,94,0.24)] transition-[width] duration-700 ease-in-out sm:left-8"
-                          style={{ 
-                            width: `${Math.min(progress, 100)}%`,
-                            maxWidth: "100%",
-                            boxSizing: "border-box"
+                          className="absolute left-[19px] top-2 w-1 bg-gradient-to-b from-emerald-400 via-green-500 to-emerald-600 rounded-full transition-all duration-700 ease-in-out animate-pulse"
+                          style={{
+                            height: `${progress}%`,
+                            maxHeight: "92%"
                           }}
                         />
+                        {timeline.map((step, index) => {
+                          const isCompleted = step.state === "completed";
+                          const isCurrent = step.state === "current";
+                          const stepTimestamp = getTimelineTimestamp(order, step.label);
+                          const stepTimestampLabel = step.label === "Pending" ? "Placed on" : `${step.label} on`;
 
-                        <div className="relative z-10 grid grid-cols-4 gap-3 sm:gap-4">
-                          {timeline.map((step, index) => {
-                        const isCompleted = step.state === "completed";
-                        const isCurrent = step.state === "current";
-                        const stepTimestamp = getTimelineTimestamp(order, step.label);
-                        const stepTimestampLabel = step.label === "Pending" ? "Placed on" : `${step.label} on`;
-
-                        return (
-                          <div key={step.label} className="flex flex-col items-center text-center">
-                            <div className="flex items-center justify-center">
+                          return (
+                            <div key={step.label} className="relative z-10 flex items-start gap-4">
                               <div
-                                className={`relative flex h-12 w-12 items-center justify-center rounded-full border-2 text-lg transition-all duration-500 ${
+                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-base transition-all duration-500 ${
                                   isCompleted
-                                    ? "border-emerald-500 bg-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.22)]"
+                                    ? "border-emerald-500 bg-emerald-500 text-white shadow-[0_6px_15px_rgba(16,185,129,0.22)]"
                                     : isCurrent
-                                      ? "timeline-step-current border-emerald-300 bg-emerald-50 text-emerald-600 shadow-[0_0_0_6px_rgba(52,211,153,0.12),0_10px_24px_rgba(16,185,129,0.18)]"
+                                      ? "timeline-step-current border-emerald-300 bg-emerald-50 text-emerald-600 shadow-[0_0_0_4px_rgba(52,211,153,0.12)] animate-pulse"
                                       : "border-sage-300 bg-white text-sage-300"
                                 }`}
                               >
-                                {isCurrent && (
-                                  <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-emerald-300/30" />
-                                )}
                                 {step.icon}
                               </div>
+                              <div className="space-y-1 pt-1 min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <p className={`text-sm font-bold ${isCompleted ? "text-emerald-700" : "text-sage-600"}`}>
+                                    {step.label}
+                                  </p>
+                                  <span className={`text-[10px] font-extrabold uppercase tracking-[0.10em] ${isCompleted ? "text-emerald-600" : "text-sage-400"}`}>
+                                    {isCompleted ? "Done" : isCurrent ? "Current" : "Pending"}
+                                  </span>
+                                </div>
+                                {stepTimestamp ? (
+                                  <p className="text-xs font-medium leading-relaxed text-sage-500 break-words">
+                                    {stepTimestampLabel}: {formatDateTime(stepTimestamp)}
+                                  </p>
+                                ) : (
+                                  <p className="text-xs font-medium text-sage-400">Pending</p>
+                                )}
+                              </div>
                             </div>
-
-                            <div className="mt-4 max-w-[11rem] space-y-1">
-                              <p className={`text-sm font-bold transition-colors duration-300 ${isCompleted ? "text-emerald-700" : "text-sage-600"}`}>
-                                {step.label}
-                              </p>
-                              <span className={`inline-flex text-[11px] font-extrabold uppercase tracking-[0.12em] ${isCompleted ? "text-emerald-600" : "text-sage-400"}`}>
-                                {isCompleted ? "Done" : isCurrent ? "Current" : "Pending"}
-                              </span>
-
-                              {stepTimestamp ? (
-                                <p className="text-xs font-medium leading-relaxed text-sage-500">
-                                  {stepTimestampLabel}: {formatDateTime(stepTimestamp)}
-                                </p>
-                              ) : (
-                                <p className="text-xs font-medium text-sage-400">Pending</p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                        </div>
+                          );
+                        })}
                       </div>
 
-                      <div className="mt-1 flex items-center justify-between text-[11px] font-extrabold uppercase tracking-[0.14em] text-sage-400">
-                        <span>Placed</span>
-                        <span>Processing</span>
-                        <span>On Route</span>
-                        <span>Delivered</span>
+                      {/* Desktop Timeline (horizontal) */}
+                      <div className="hidden md:block">
+                        <div className="relative overflow-hidden px-1 pb-10 pt-2 sm:px-3">
+                          <div className="absolute left-6 right-6 top-8 h-1 rounded-full bg-slate-200/90 sm:left-8 sm:right-8" />
+                          <div
+                            className="absolute left-6 top-8 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 shadow-[0_0_18px_rgba(34,197,94,0.24)] transition-[width] duration-700 ease-in-out sm:left-8"
+                            style={{ 
+                              width: `${Math.min(progress, 100)}%`,
+                              maxWidth: "100%",
+                              boxSizing: "border-box"
+                            }}
+                          />
+
+                          <div className="relative z-10 grid grid-cols-4 gap-3 sm:gap-4">
+                            {timeline.map((step, index) => {
+                              const isCompleted = step.state === "completed";
+                              const isCurrent = step.state === "current";
+                              const stepTimestamp = getTimelineTimestamp(order, step.label);
+                              const stepTimestampLabel = step.label === "Pending" ? "Placed on" : `${step.label} on`;
+
+                              return (
+                                <div key={step.label} className="flex flex-col items-center text-center">
+                                  <div className="flex items-center justify-center">
+                                    <div
+                                      className={`relative flex h-12 w-12 items-center justify-center rounded-full border-2 text-lg transition-all duration-500 ${
+                                        isCompleted
+                                          ? "border-emerald-500 bg-emerald-500 text-white shadow-[0_10px_24px_rgba(16,185,129,0.22)]"
+                                          : isCurrent
+                                            ? "timeline-step-current border-emerald-300 bg-emerald-50 text-emerald-600 shadow-[0_0_0_6px_rgba(52,211,153,0.12),0_10px_24px_rgba(16,185,129,0.18)]"
+                                            : "border-sage-300 bg-white text-sage-300"
+                                      }`}
+                                    >
+                                      {isCurrent && (
+                                        <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-emerald-300/30" />
+                                      )}
+                                      {step.icon}
+                                    </div>
+                                  </div>
+
+                                  <div className="mt-4 max-w-[11rem] space-y-1">
+                                    <p className={`text-sm font-bold transition-colors duration-300 ${isCompleted ? "text-emerald-700" : "text-sage-600"}`}>
+                                      {step.label}
+                                    </p>
+                                    <span className={`inline-flex text-[11px] font-extrabold uppercase tracking-[0.12em] ${isCompleted ? "text-emerald-600" : "text-sage-400"}`}>
+                                      {isCompleted ? "Done" : isCurrent ? "Current" : "Pending"}
+                                    </span>
+
+                                    {stepTimestamp ? (
+                                      <p className="text-xs font-medium leading-relaxed text-sage-500">
+                                        {stepTimestampLabel}: {formatDateTime(stepTimestamp)}
+                                      </p>
+                                    ) : (
+                                      <p className="text-xs font-medium text-sage-400">Pending</p>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="mt-1 flex items-center justify-between text-[11px] font-extrabold uppercase tracking-[0.14em] text-sage-400">
+                          <span>Placed</span>
+                          <span>Processing</span>
+                          <span>On Route</span>
+                          <span>Delivered</span>
+                        </div>
                       </div>
                     </div>
                   </article>

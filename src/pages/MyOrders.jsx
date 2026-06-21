@@ -329,7 +329,7 @@ export default function MyOrders() {
             <div className="relative flex flex-wrap items-start justify-between gap-3">
               <div className="space-y-1 flex-1">
                 <p className="text-[0.7rem] font-bold uppercase tracking-[0.22em] text-sage-700/75">Order ID</p>
-                <p className="text-lg font-extrabold text-sage-800">{orderNumber}</p>
+                <p className="text-lg font-extrabold text-sage-800 break-all">{orderNumber}</p>
                 <p className="text-sm font-medium text-sage-700">Placed on {formatDate(order.createdAt)}</p>
               </div>
 
